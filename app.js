@@ -2,20 +2,50 @@
 var express = require('express');
 var utility = require('utility');
 
+var api = require('./api');
+var router = express.Router();
+
+var R = require('./router');
+
+
 // 建立 express 实例
 var app = express();
 
-app.get('/', function (req, res) {
-  // 从 req.query 中取出我们的 q 参数。
-  // 如果是 post 传来的 body 数据，则是在 req.body 里面，不过 express 默认不处理 body 中的信息，需要引入 https://github.com/expressjs/body-parser 这个中间件才会处理，这个后面会讲到。
-  var q = req.query.q;
 
-  // 调用 utility.md5 方法，得到 md5 之后的值
-  var md5Value = utility.md5(q);
+/*连接数据库*/
+// var dataUrl = 'mongodb://localhost/sky';
+// var mongoose = require('mongoose');
+// mongoose.connect(dataUrl);
 
-  res.send(md5Value);
+//设置静态文件目录
+app.use(express.static(__dirname + '/public'));
+
+app.set('port', process.env.PROT || 3000);
+// app.set('views',path.join(__dirname,'/public'));
+app.set('view engine', 'html');
+
+
+/*路由*/
+// router.get('/', function (request, response) {
+//     response.end("Welcome to the homepage!");
+// });
+//
+// router.get('/about', function (request, response) {
+//     response.end("Welcome to the about page!");
+// });
+//
+// app.use('/', router);
+
+// 接口
+app.get('/api', api.index);
+
+/*404页面*/
+router.get("*", function (request, response) {
+    response.end("404!");
 });
 
 app.listen(3000, function (req, res) {
-  console.log('app is running at port 3000');
+    console.log('app is running at port 3000');
 });
+
+
